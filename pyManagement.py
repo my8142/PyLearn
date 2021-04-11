@@ -1,8 +1,15 @@
+'''
+
+
+Reference websites for pandas:
+    https://pandas.pydata.org/
+    https://pandas.pydata.org/pandas-docs/stable/reference/index.html
+
+'''
+
 
 # IMPORT LIBRARIES
-# http://pandas.pydata.org
-# https://pandas.pydata.org/pandas-docs/stable/reference/index.html
-# http://www.aosabook.org/en/matplotlib.html
+
 import pandas as pd                 
 import numpy as np
 import matplotlib.pylab as plt      
@@ -12,6 +19,8 @@ import matplotlib.pylab as plt
 
 df_path = "C:/Users/lione/myPythonPrograms/ACTUAL_dta_analysis/data/auto.csv"
 df = pd.read_csv(df_path, header=None)
+
+df_can = pd.read_excel('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/Canada.xlsx', sheet_name='Canada by Citizenship', skiprows=range(20), skipfooter=2)
 
 
 # Read/Save Other Data Formats
@@ -26,10 +35,20 @@ df = pd.read_csv(df_path, header=None)
 
 
 
+# CREATE A TABLE BASED ON A DICTIONARY
+
+BMI = {'name':['Lionel','François','Jules'],'date':['01/02/2021','02/03/2021','03/04/2021'],'weight':[77,81,85],'height':[184,184,184]}
+
+bmi_frame = pd.DataFrame(BMI)   #Create a table based on a dictionary
+
+bmi_frame.head()
+
+
+
 # DESCRIBE DATASET
 
 df.head()                   # print first rows
-df['price'].head(5)
+df['price'].head(10)
 
 df.tail()                   # print last rows
 
@@ -44,23 +63,44 @@ df.info(verbose=False)
 
 df.columns
 df.columns.values
+print(df.columns)
 
 df['drive-wheels'].unique() # group the variable "drive-wheels" by categories
 
 df.index.values
+print(df.index)
 
-df.shape    
+df.shape                    # shows the dimensions of the dataframe  
+
+print(type(df.columns))     # columns default type
+print(type(df.index))       # index default type
+
+df_can.columns.tolist()     # get the columns as lists
+df_can.index.tolist()       # get the index as lists
+
+print (type(df_can.columns.tolist()))
+print (type(df_can.index.tolist()))
 
 
 
 # SELECT COLUMNS
 
-df_group_one = df[['drive-wheels','body-style','price']]
+# There are two ways to filter on a column name:
+
+# Method 1: Quick and easy, but only works if the column name does NOT have spaces or special characters.
+
+df.column_name              # returns series
+
+
+# Method 2: More robust, and can filter on multiple columns.
+
+df_group_one = df[['drive-wheels','body-style','price']]        # returns dataframe
 df.head()
 
 x = df['body-style']        # get the column as a series
 
 df.drop(['drive-wheels','body-style','price'], axis=1, inplace=True)
+df.head()
 
 
 
@@ -69,15 +109,54 @@ df.drop(['drive-wheels','body-style','price'], axis=1, inplace=True)
 df.rename(columns={'OdName':'Country', 'AreaName':'Continent', 'RegName':'Region'}, inplace=True)
 df.columns
 
+# convert column names into strings
+
+df_can.columns = list(map(str, df_can.columns))     # [print (type(x)) for x in df_can.columns.values] #<-- uncomment to check type of column headers
+
+# Since we converted column to string, let's declare a variable that will allow us to easily call upon the full range of years:
+
+years = list(map(str, range(1980, 2014)))       # useful for plotting later on
+print(years)
 
 
-# CREATE A TABLE BASED ON A DICTIONARY
 
-BMI = {'name':['Lionel','François','Jules'],'date':['01/02/2021','02/03/2021','03/04/2021'],'weight':[77,81,85],'height':[184,184,184]}
 
-bmi_frame = pd.DataFrame(BMI)   #Create a table based on a dictionary
+# SELECT ROW
 
-bmi_frame.head()
+#Before we proceed, notice that the defaul index of the dataset is a numeric range from 0 to n. This makes it very difficult to do a query by a specific key. For example to search for data on a employee, we need to know the corressponding index value. This can be fixed very easily by setting the 'Employee' column as the index using set_index() method.
+
+df_firm.set_index('Employee', inplace=True)     # tip: The opposite of set is reset. So to reset the index, we can use df_can.reset_index()
+
+df_firm.index.name = None     # optional: to remove the name of the index
+
+
+#THREE WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
+
+df.loc[label]                 # filters by the labels of the index/column
+
+df.iloc[index]                # filters by the positions of the index/column
+
+
+#Example: Let's VIEW the number of immigrants from Japan (row 87) for the following scenarios:
+
+# 1. The full row data (all columns)
+print(df_can.loc['Japan'])
+
+# alternate methods
+print(df_can.iloc[87])
+print(df_can[df_can.index == 'Japan'].T.squeeze())
+
+
+# 2. for year 2013
+print(df_can.loc['Japan', 2013])
+
+# alternate method
+print(df_can.iloc[87, 36]) # year 2013 is the last column, with a positional index of 36
+
+
+# 3. for years 1980 to 1985
+print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])
+print(df_can.iloc[87, [3, 4, 5, 6, 7, 8]])
 
 
 
@@ -114,6 +193,25 @@ new_frame = bmi_frame[bmi_frame['weight']>=79]      #Define a new table followin
 
 
 
+# FILTERING BASED ON A CRITERIA
+
+# To filter the dataframe based on a condition, we simply pass the condition as a boolean vector.
+
+# 1. create the condition boolean series
+condition = df_can['Continent'] == 'Asia'
+print(condition)
+
+# 2. pass this condition into the dataFrame
+df_can[condition]
+
+# 3. we can pass mutliple criteria in the same line. 
+
+df_can[(df_can['Continent']=='Asia') & (df_can['Region']=='Southern Asia')]
+
+# note: When using 'and' and 'or' operators, pandas requires we use '&' and '|' instead of 'and' and 'or' # don't forget to enclose the two conditions in parentheses
+
+
+
 # COUNTS
 
 df['num-of-doors'].value_counts()       # which values are present in a particular column
@@ -128,15 +226,24 @@ df['num-of-doors'].value_counts().idxmax()  # calculate the most common type aut
 
 
 
+# SUM
+
+df_can['Total'] = df_can.sum(axis=1)        # add a 'Total' column that sums up the total per line over the differents columns
+
+
+
 # IDENTIFY AND HANDLE MISSING VALUES
 
-# There are two methods to detect missing data
+# There are several methods to detect missing data
 
 missing_data = df.isnull()
 missing_data.head(5)            # "True" stands for missing value, while "False" stands for not missing value.
 
 nonmissing_data = df.notnull()  # "False" stands for missing value, while "True" stands for not missing value.
 nonmissing_data.head(5)
+
+
+df.isnull().sum()               # how many null objects we have
 
 
 # Count missing values in each column
