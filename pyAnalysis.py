@@ -1,3 +1,14 @@
+'''
+
+
+Reference websites for matplotlib:
+    http://www.aosabook.org/en/matplotlib.html
+    https://matplotlib.org/stable/index.html
+
+'''
+
+
+
 
 # IMPORT LIBRARIES
 
@@ -16,8 +27,16 @@ import numpy as np
 # IMPORT VISUALIZATION PACKAGE
 
 import seaborn as sns
-import matplotlib.pyplot as plt
+
+# Matplotlib
 %matplotlib inline              # to plot in a Jupyter notebook
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+print ('Matplotlib version: ', mpl.__version__) # optional: check if Matplotlib (version >= 2.0.0) is loaded
+
+print(plt.style.available)      # optional: apply a style to Matplotlib.
+mpl.style.use(['ggplot'])       # optional: for ggplot-like style
 
 
 
@@ -28,6 +47,70 @@ drive_wheels_counts.rename(columns={'drive-wheels':'value_counts'}, inplace = Tr
 print(drive_wheels_counts)
 
 
+
+# LINE PLOTS
+
+#Example
+
+# 1. Extract the data series for Haiti
+haiti = df_can.loc['Haiti', years] # previously years as been defined as a list of several variables passing in years 1980 - 2013 to exclude the 'total' column
+haiti.head()
+
+df_CI = df_can.loc[['India', 'China'], years]     # example for 2 countries
+
+'''
+That doesn't look right...?
+
+That's because unlike for series (like haiti) dataframe has the years as its indices.
+
+Recall that _pandas_ plots the indices on the x-axis and the columns as individual lines on the y-axis. Since `df_CI` is a dataframe with the `country` as the index and `years` as the columns, we must first transpose the dataframe using `transpose()` method to swap the row and columns.
+
+
+df_CI = df_CI.transpose()
+df_CI.head()
+
+'''
+
+# 2. plot a line plot by appending .plot() to the haiti dataframe
+haiti.plot()
+
+
+# 3. let's label the x and y axis using plt.title(), plt.ylabel(), and plt.xlabel()
+haiti.index = haiti.index.map(int) # let's change the index values of Haiti to type integer for plotting
+haiti.plot(kind='line')
+
+plt.title('Immigration from Haiti')
+plt.ylabel('Number of immigrants')
+plt.xlabel('Years')
+
+
+# 4. let's annotate the 2010 Earthquake spike in the plot by using the plt.text() method.
+plt.text(2000, 6000, '2010 Earthquake') # syntax: plt.text(x, y, label)
+
+
+# 5. change the size using the `figsize` parameter.
+haiti.index = haiti.index.map(int) # let's change the index values of haiti to type integer for plotting
+haiti.plot(kind='line', figsize=(14, 8)) # pass a tuple (x, y) size
+
+
+# 6. show the updates made to the figure
+plt.show() # need this line to plot again
+
+
+'''
+Other Plots
+There are many other plotting styles available other than the default Line plot, all of which can be accessed by passing kind keyword to plot(). The full list of available plots are as follows:
+
+bar for vertical bar plots
+barh for horizontal bar plots
+hist for histogram
+box for boxplot
+kde or density for density plots
+area for area plots
+pie for pie plots
+scatter for scatter plots
+hexbin for hexbin plot
+'''
 
 # BOX PLOTS
 

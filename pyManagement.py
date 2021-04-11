@@ -102,6 +102,9 @@ x = df['body-style']        # get the column as a series
 df.drop(['drive-wheels','body-style','price'], axis=1, inplace=True)
 df.head()
 
+df_dropped = df.drop(['drive-wheels','body-style','price'], axis=1) # create a new table instead of inpleace
+df_dropped.head()
+
 
 
 # RENAME COLUMNS
@@ -130,7 +133,7 @@ df_firm.set_index('Employee', inplace=True)     # tip: The opposite of set is re
 df_firm.index.name = None     # optional: to remove the name of the index
 
 
-#THREE WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
+#MANY WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
 
 df.loc[label]                 # filters by the labels of the index/column
 
@@ -159,6 +162,10 @@ print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])
 print(df_can.iloc[87, [3, 4, 5, 6, 7, 8]])
 
 
+# get the top 5 entries
+df_top5 = df_top.head(5)
+
+
 
 #THREE WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
 
@@ -185,11 +192,19 @@ sample = bmi_frame.iloc[0:2,0:3]                    #Using iloc for slicing.
 new_frame = bmi_frame['name'].unique()              #Values without duplicates
 
 
-
 #~SELECT
 bmi_frame['weight']>= 79                            #Result is a True / False for each line
 
 new_frame = bmi_frame[bmi_frame['weight']>=79]      #Define a new table following the criteria
+
+
+#~SORT
+df_can.sort_values(by='Total', ascending=False, axis=0, inplace=True)
+df_can.head()
+
+
+#~TRANSPOSE
+df_top5 = df_top5[years].transpose() 
 
 
 
@@ -201,11 +216,12 @@ new_frame = bmi_frame[bmi_frame['weight']>=79]      #Define a new table followin
 condition = df_can['Continent'] == 'Asia'
 print(condition)
 
+
 # 2. pass this condition into the dataFrame
 df_can[condition]
 
-# 3. we can pass mutliple criteria in the same line. 
 
+# 3. we can pass mutliple criteria in the same line. 
 df_can[(df_can['Continent']=='Asia') & (df_can['Region']=='Southern Asia')]
 
 # note: When using 'and' and 'or' operators, pandas requires we use '&' and '|' instead of 'and' and 'or' # don't forget to enclose the two conditions in parentheses
