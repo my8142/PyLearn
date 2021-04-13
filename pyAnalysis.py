@@ -1,5 +1,19 @@
 '''
 
+Other Plots
+There are many other plotting styles available other than the default Line plot, all of which can be accessed by passing kind keyword to plot().
+
+The full list of available plots are as follows:
+
+    bar                 for vertical bar plots
+    barh                for horizontal bar plots
+    hist                for histogram
+    box                 for boxplot
+    kde or density      for density plots
+    area                for area plots
+    pie                 for pie plots
+    scatter             for scatter plots
+    hexbin              for hexbin plot
 
 Reference websites for matplotlib:
     http://www.aosabook.org/en/matplotlib.html
@@ -97,20 +111,38 @@ haiti.plot(kind='line', figsize=(14, 8)) # pass a tuple (x, y) size
 plt.show() # need this line to plot again
 
 
-'''
-Other Plots
-There are many other plotting styles available other than the default Line plot, all of which can be accessed by passing kind keyword to plot(). The full list of available plots are as follows:
 
-bar for vertical bar plots
-barh for horizontal bar plots
-hist for histogram
-box for boxplot
-kde or density for density plots
-area for area plots
-pie for pie plots
-scatter for scatter plots
-hexbin for hexbin plot
-'''
+# AREA PLOTS
+
+df_top5.plot(kind='area')
+
+plt.title('Imigration trend of top 5 countries')
+plt.ylabel('Number of immigrants')
+plt.xlabel('Years')
+
+plt.show()
+
+
+
+# HISTOGRAMS
+
+count, bin_edges = np.histogram(df_canada['2013'])  # split the distribution into 10 bins of equal width
+
+df_can['2013'].plot(kind='hist', xticks = bin_edges)
+
+plt.title('Histogram of Immigration from 195 countries in 2013')
+plt.ylabel('Number of countries')
+plt.xlabel('Number of immigrants')
+
+plt.show()
+
+
+
+# BAR CHARTS
+
+
+
+
 
 # BOX PLOTS
 

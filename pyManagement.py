@@ -200,10 +200,13 @@ new_frame = bmi_frame[bmi_frame['weight']>=79]      #Define a new table followin
 
 #~SORT
 df_can.sort_values(by='Total', ascending=False, axis=0, inplace=True)
+df_can.sort_values(['Total'], ascending=False, axis=0, inplace=True)    # a little bit different
 df_can.head()
 
 
 #~TRANSPOSE
+years = list(map(str, range(1980, 2014)))
+df_top5 = df_can.head()
 df_top5 = df_top5[years].transpose() 
 
 
