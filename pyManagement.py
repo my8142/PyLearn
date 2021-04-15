@@ -59,27 +59,32 @@ df.describe(include='all')  # provides a full summary statistics
 df.dtypes()
 
 df.info()
-df.info(verbose=False)
+df.info(verbose=False)      # verbosebool, optional = Whether to print the full summary.
 
-df.columns
+df.columns                  # list of column headers we can call upon the dataframe'
 df.columns.values
 print(df.columns)
 
 df['drive-wheels'].unique() # group the variable "drive-wheels" by categories
 
-df.index.values
+df.index.values             # the list of indicies
 print(df.index)
 
-df.shape                    # shows the dimensions of the dataframe  
+print(df.shape)                    # shows the dimensions of the dataframe  
 
-print(type(df.columns))     # columns default type
-print(type(df.index))       # index default type
+print(type(df.columns))     # columns default type >> The default type of columns is NOT list.
+print(type(df.index))       # index default type >> The default type of index is NOT list.
 
 df_can.columns.tolist()     # get the columns as lists
 df_can.index.tolist()       # get the index as lists
 
 print (type(df_can.columns.tolist()))
 print (type(df_can.index.tolist()))
+
+# example
+print('data dimensions:', df_can.shape)
+print(df_can.columns)
+df_can.head(2)
 
 
 
@@ -90,6 +95,7 @@ print (type(df_can.index.tolist()))
 # Method 1: Quick and easy, but only works if the column name does NOT have spaces or special characters.
 
 df.column_name              # returns series
+df_can.Country              # for example returns the column Country
 
 
 # Method 2: More robust, and can filter on multiple columns.
@@ -99,7 +105,7 @@ df.head()
 
 x = df['body-style']        # get the column as a series
 
-df.drop(['drive-wheels','body-style','price'], axis=1, inplace=True)
+df.drop(['drive-wheels','body-style','price'], axis=1, inplace=True)    # # in pandas axis=0 represents rows (default) and axis=1 represents columns.
 df.head()
 
 df_dropped = df.drop(['drive-wheels','body-style','price'], axis=1) # create a new table instead of inpleace
@@ -113,6 +119,8 @@ df.rename(columns={'OdName':'Country', 'AreaName':'Continent', 'RegName':'Region
 df.columns
 
 # convert column names into strings
+
+all(isinstance(column, str) for column in df_can.columns)   # let's examine the types of the column labels
 
 df_can.columns = list(map(str, df_can.columns))     # [print (type(x)) for x in df_can.columns.values] #<-- uncomment to check type of column headers
 
@@ -158,7 +166,8 @@ print(df_can.iloc[87, 36]) # year 2013 is the last column, with a positional ind
 
 
 # 3. for years 1980 to 1985
-print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])
+print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])    # returns a dataframe
+print(df_can[['Country', 1980, 1981, 1982, 1983, 1984, 1985]])      # notice that 'Country' is string, and the years are integers. for the sake of consistency, we will convert all column names to string later on.
 print(df_can.iloc[87, [3, 4, 5, 6, 7, 8]])
 
 
@@ -168,6 +177,42 @@ df_top5 = df_top.head(5)
 
 
 #THREE WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
+
+#There are main 3 ways to select rows:
+
+df.loc[label]               # filters by the labels of the index/column
+df.iloc[index]              # filters by the positions of the index/column
+
+'''
+Before we proceed, notice that the defaul index of the dataset is a numeric range from 0 to n. This makes it very difficult to do a query by a specific country. For example to search for data on Japan, we need to know the corressponding index value.
+
+This can be fixed very easily by setting the 'Country' column as the index using set_index() method.
+'''
+
+df_can.set_index('Country', inplace=True)    # tip: The opposite of set is reset. So to reset the index, we can use df_can.reset_index()
+df_can.index.name = None    # optional: to remove the name of the index
+
+
+# 1. the full row data (all columns)
+print(df_can.loc['Japan'])
+
+# alternate methods
+print(df_can.iloc[87])
+print(df_can[df_can.index == 'Japan'].T.squeeze())
+
+
+# 2. for year 2013
+print(df_can.loc['Japan', 2013])
+
+# alternate method
+print(df_can.iloc[87, 36]) # year 2013 is the last column, with a positional index of 36
+
+
+# 3. for years 1980 to 1985
+print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])
+print(df_can.iloc[87, [3, 4, 5, 6, 7, 8]])
+
+
 
 #loc is primarily label based; uses column headers and row indexes to select the data. loc can also take an integer as a row or column number.
 bmi_frame.loc[1,'name']                             #Find the element in the second-row and first column
@@ -245,7 +290,7 @@ df['num-of-doors'].value_counts().idxmax()  # calculate the most common type aut
 
 
 
-# SUM
+# TOTAL
 
 df_can['Total'] = df_can.sum(axis=1)        # add a 'Total' column that sums up the total per line over the differents columns
 

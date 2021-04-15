@@ -114,10 +114,33 @@ plt.show() # need this line to plot again
 
 # AREA PLOTS
 
-df_top5.plot(kind='area')
+# Created a dataframe of the top 5 countries that contribued the most immigrants to Canada from 1980 to 2013
 
-plt.title('Imigration trend of top 5 countries')
-plt.ylabel('Number of immigrants')
+df_can.sort_values(['Total'], ascending=False, axis=0, inplace=True)
+
+# get the top 5 entries
+df_top5 = df_can.head()
+
+# transpose the dataframe
+df_top5 = df_top5[years].transpose() 
+df_top5.head()
+
+
+df_top5.index = df_top5.index.map(int) # let's change the index values of df_top5 to type integer for plotting
+df_top5.plot(kind='area', 
+             alpha=0.25, # 0-1, default value a= 0.5 // transparency
+             stacked=False,
+             figsize=(20, 10),
+            )
+
+df_top5.plot(kind='area', stacked=False, figsize=(20, 10), # pass a tuple (x, y) size)
+'''
+Area plots are stacked by default. And to produce a stacked area plot, each column must be either all positive or all negative values (any NaN values will defaulted to 0). To produce an unstacked plot, pass stacked=False.
+'''
+
+
+plt.title('Immigration Trend of Top 5 Countries')
+plt.ylabel('Number of Immigrants')
 plt.xlabel('Years')
 
 plt.show()
@@ -139,6 +162,17 @@ plt.show()
 
 
 # BAR CHARTS
+
+years = list(map(str, range(1980, 2014)))
+df_iceland = df_canada.loc['Iceland', years]
+
+df_iceland.plot(kind='bar')
+
+plt.title('Icelandic immigrants to Canada from 1980 to 2013')
+plt.xlabel('Year')
+plt.ylabel('Number of immigrants')
+
+plt.show()
 
 
 
