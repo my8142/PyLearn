@@ -55,6 +55,7 @@ print(plt.style.available)      # optional: apply a style to Matplotlib.
 mpl.style.use(['ggplot'])       # optional: for ggplot-like style
 
 
+
 # CATEGORICAL DATA
 
 drive_wheels_counts = df['drive-wheels'].value_counts().to_frame()
@@ -127,6 +128,7 @@ plt.xlabel('Years')
 plt.show()
 
 
+
 # AREA PLOTS
 
 # Created a dataframe of the top 5 countries that contribued the most immigrants to Canada from 1980 to 2013
@@ -161,6 +163,7 @@ plt.xlabel('Years')
 plt.show()
 
 
+
 # PIE CHARTS
 
 colors_list = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'lightgreen', 'pink']
@@ -189,8 +192,6 @@ plt.show()
 
 
 
-
-
 # HISTOGRAMS
 
 count, bin_edges = np.histogram(df_canada['2013'])  # split the distribution into 10 bins of equal width
@@ -202,6 +203,7 @@ plt.ylabel('Number of countries')
 plt.xlabel('Number of immigrants')
 
 plt.show()
+
 
 
 # BAR CHARTS
@@ -218,28 +220,97 @@ plt.ylabel('Number of immigrants')
 plt.show()
 
 
+
 # BOX PLOTS
+
+# simple
 
 sns.boxplot(x='drive-wheels', y='price', data=df)
 
-df_japan = df_canada.loc[['Japan'], years].transpose()
-df_japan.plot(kind='box')
 
-plt.title('Box plot of Japanese Immigrants from 1980-2013')
+# more elaborated
+
+df_japan = df_can.loc[['Japan'], years].transpose()     # to get a dataframe, place extra square brackets around 'Japan'.
+
+df_japan.plot(kind='box', figsize=(8, 6))
+
+plt.title('Box plot of Japanese Immigrants from 1980 - 2013')
 plt.ylabel('Number of Immigrants')
 
 plt.show()
 
 
+# horizontal box plots
+
+df_CI.plot(kind='box', figsize=(10, 7), color='blue', vert=False)           # If you prefer to create horizontal box plots, you can pass the vert parameter in the plot function and assign it to False. You can also specify a different color in case you are not a big fan of the default red color.
+
+plt.title('Box plots of Immigrants from China and India (1980 - 2013)')
+plt.xlabel('Number of Immigrants')
+
+plt.show()
+
+
+# SUBPLOTS
+
+fig = plt.figure() # create figure
+
+ax0 = fig.add_subplot(1, 2, 1) # add subplot 1 (1 row, 2 columns, first plot)
+ax1 = fig.add_subplot(1, 2, 2) # add subplot 2 (1 row, 2 columns, second plot). See tip below**
+
+# Subplot 1: Box plot
+df_CI.plot(kind='box', color='blue', vert=False, figsize=(20, 6), ax=ax0) # add to subplot 1
+ax0.set_title('Box Plots of Immigrants from China and India (1980 - 2013)')
+ax0.set_xlabel('Number of Immigrants')
+ax0.set_ylabel('Countries')
+
+# Subplot 2: Line plot
+df_CI.plot(kind='line', figsize=(20, 6), ax=ax1) # add to subplot 2
+ax1.set_title ('Line Plots of Immigrants from China and India (1980 - 2013)')
+ax1.set_ylabel('Number of Immigrants')
+ax1.set_xlabel('Years')
+
+plt.show()
+
+
+
 # SCATTER PLOT
 
-df_total.plot(kind = 'scatter', x = 'year', y = 'total',)
+df_tot.plot(kind='scatter', x='year', y='total', figsize=(10, 6), color='darkblue')
 
-plt.title('Total Immigrant population to Canada from 1980-2013')
+plt.title('Total Immigration to Canada from 1980 - 2013')
 plt.xlabel('Year')
 plt.ylabel('Numer of immigrants')
 
 plt.show()
+
+
+# Let's try to plot a linear line of best fit, and use it to predict the number of immigrants in 2015.
+
+# Step 1: Get the equation of line of best fit. We will use Numpy's polyfit() method by passing in the following:
+
+x = df_tot['year']      # year on x-axis
+y = df_tot['total']     # total on y-axis
+fit = np.polyfit(x, y, deg=1)   # deg: Degree of fitting polynomial. 1 = linear, 2 = quadratic, and so on.
+
+fit
+
+
+# Step 2: Plot the regression line on the `scatter plot`.
+
+df_tot.plot(kind='scatter', x='year', y='total', figsize=(10, 6), color='darkblue')
+
+plt.title('Total Immigration to Canada from 1980 - 2013')
+plt.xlabel('Year')
+plt.ylabel('Number of Immigrants')
+
+# plot line of best fit
+plt.plot(x, fit[0] * x + fit[1], color='red') # recall that x is the Years
+plt.annotate('y={0:.0f} x + {1:.0f}'.format(fit[0], fit[1]), xy=(2000, 150000))
+
+plt.show()
+
+# print out the line of best fit
+'No. Immigrants = {0:.0f} * Year + {1:.0f}'.format(fit[0], fit[1]) 
 
 
 # Another solution ?
@@ -251,6 +322,64 @@ plt.scatter(x,y)
 plt.title('Scatterplot of Engine Size vs Price')
 plt.xlabel('Engine Size')
 plt.ylabel('Price')
+
+
+
+# BUBBLE PLOTS
+ 
+ 
+# Step 1 : Get the data in a transposed data frame
+
+df_can_t = df_can[years].transpose() # transposed dataframe
+
+# cast the Years (the index) to type int
+df_can_t.index = map(int, df_can_t.index)
+
+# let's label the index. This will automatically be the column name when we reset the index
+df_can_t.index.name = 'Year'
+
+# reset index to bring the Year in as a column
+df_can_t.reset_index(inplace=True)
+
+# view the changes
+df_can_t.head()
+ 
+ 
+# Step 2 : Create the normalized weights.
+
+# normalize Brazil data
+norm_brazil = (df_can_t['Brazil'] - df_can_t['Brazil'].min()) / (df_can_t['Brazil'].max() - df_can_t['Brazil'].min())
+
+# normalize Argentina data
+norm_argentina = (df_can_t['Argentina'] - df_can_t['Argentina'].min()) / (df_can_t['Argentina'].max() - df_can_t['Argentina'].min())
+
+
+# Step 3: Plot the data
+
+# Brazil
+ax0 = df_can_t.plot(kind='scatter',
+                    x='Year',
+                    y='Brazil',
+                    figsize=(14, 8),
+                    alpha=0.5,                  # transparency
+                    color='green',
+                    s=norm_brazil * 2000 + 10,  # pass in weights 
+                    xlim=(1975, 2015)
+                   )
+
+# Argentina
+ax1 = df_can_t.plot(kind='scatter',
+                    x='Year',
+                    y='Argentina',
+                    alpha=0.5,
+                    color="blue",
+                    s=norm_argentina * 2000 + 10,
+                    ax = ax0
+                   )
+
+ax0.set_ylabel('Number of Immigrants')
+ax0.set_title('Immigration from Brazil and Argentina from 1980 - 2013')
+ax0.legend(['Brazil', 'Argentina'], loc='upper left', fontsize='x-large')
 
 
 
