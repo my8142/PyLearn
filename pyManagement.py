@@ -4,6 +4,7 @@
 Reference websites for pandas:
     https://pandas.pydata.org/
     https://pandas.pydata.org/pandas-docs/stable/reference/index.html
+    https://pandas.pydata.org/?cm_mmc=Email_Newsletter-_-Developer_Ed%2BTech-_-WW_WW-_-SkillsNetwork-Courses-IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork-20297740&cm_mmca1=000026UJ&cm_mmca2=10006555&cm_mmca3=M12345678&cvosrc=email.Newsletter.M12345678&cvo_campaign=000026UJ&cm_mmc=Email_Newsletter-_-Developer_Ed%2BTech-_-WW_WW-_-SkillsNetwork-Courses-IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork-20297740&cm_mmca1=000026UJ&cm_mmca2=10006555&cm_mmca3=M12345678&cvosrc=email.Newsletter.M12345678&cvo_campaign=000026UJ&cm_mmc=Email_Newsletter-_-Developer_Ed%2BTech-_-WW_WW-_-SkillsNetwork-Courses-IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork-20297740&cm_mmca1=000026UJ&cm_mmca2=10006555&cm_mmca3=M12345678&cvosrc=email.Newsletter.M12345678&cvo_campaign=000026UJ
 
 '''
 
@@ -94,11 +95,11 @@ df_can.head(2)
 
 # Method 1: Quick and easy, but only works if the column name does NOT have spaces or special characters.
 
-df.column_name              # returns series
+df.column_name              # returns series - ONLY ONE COLUMN
 df_can.Country              # for example returns the column Country
 
 
-# Method 2: More robust, and can filter on multiple columns.
+# Method 2: More robust, and can filter on MULTIPLE COLUMNS.
 
 df_group_one = df[['drive-wheels','body-style','price']]        # returns dataframe
 df.head()
@@ -141,16 +142,27 @@ df_firm.set_index('Employee', inplace=True)     # tip: The opposite of set is re
 df_firm.index.name = None     # optional: to remove the name of the index
 
 
-#MANY WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
+#THREE WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
 
-df.loc[label]                 # filters by the labels of the index/column
+#There are main 3 ways to select rows:
 
-df.iloc[index]                # filters by the positions of the index/column
+df.loc[label]               # filters by the labels of the index/column
+df.iloc[index]              # filters by the positions of the index/column
+
+'''
+Before we proceed, notice that the defaul index of the dataset is a numeric range from 0 to n. This makes it very difficult to do a query by a specific country. For example to search for data on Japan, we need to know the corressponding index value.
+
+This can be fixed very easily by setting the 'Country' column as the index using set_index() method.
+'''
+
+df_can.set_index('Country', inplace=True)    # tip: The opposite of set is reset. So to reset the index, we can use df_can.reset_index()
+df_can.index.name = None    # optional: to remove the name of the index
+
+df_firm.set_index('Employee', inplace=True)     # tip: The opposite of set is reset. So to reset the index, we can use df_can.reset_index()
+df_firm.index.name = None     # optional: to remove the name of the index
 
 
-#Example: Let's VIEW the number of immigrants from Japan (row 87) for the following scenarios:
-
-# 1. The full row data (all columns)
+# 1. the full row data (all columns)
 print(df_can.loc['Japan'])
 
 # alternate methods
@@ -170,48 +182,8 @@ print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])    # returns a 
 print(df_can[['Country', 1980, 1981, 1982, 1983, 1984, 1985]])      # notice that 'Country' is string, and the years are integers. for the sake of consistency, we will convert all column names to string later on.
 print(df_can.iloc[87, [3, 4, 5, 6, 7, 8]])
 
-
 # get the top 5 entries
 df_top5 = df_top.head(5)
-
-
-
-#THREE WAYS TO SELECT DATA FROM A DATA FRAME IN PANDAS
-
-#There are main 3 ways to select rows:
-
-df.loc[label]               # filters by the labels of the index/column
-df.iloc[index]              # filters by the positions of the index/column
-
-'''
-Before we proceed, notice that the defaul index of the dataset is a numeric range from 0 to n. This makes it very difficult to do a query by a specific country. For example to search for data on Japan, we need to know the corressponding index value.
-
-This can be fixed very easily by setting the 'Country' column as the index using set_index() method.
-'''
-
-df_can.set_index('Country', inplace=True)    # tip: The opposite of set is reset. So to reset the index, we can use df_can.reset_index()
-df_can.index.name = None    # optional: to remove the name of the index
-
-
-# 1. the full row data (all columns)
-print(df_can.loc['Japan'])
-
-# alternate methods
-print(df_can.iloc[87])
-print(df_can[df_can.index == 'Japan'].T.squeeze())
-
-
-# 2. for year 2013
-print(df_can.loc['Japan', 2013])
-
-# alternate method
-print(df_can.iloc[87, 36]) # year 2013 is the last column, with a positional index of 36
-
-
-# 3. for years 1980 to 1985
-print(df_can.loc['Japan', [1980, 1981, 1982, 1983, 1984, 1984]])
-print(df_can.iloc[87, [3, 4, 5, 6, 7, 8]])
-
 
 
 #loc is primarily label based; uses column headers and row indexes to select the data. loc can also take an integer as a row or column number.
@@ -247,6 +219,12 @@ new_frame = bmi_frame[bmi_frame['weight']>=79]      #Define a new table followin
 df_can.sort_values(by='Total', ascending=False, axis=0, inplace=True)
 df_can.sort_values(['Total'], ascending=False, axis=0, inplace=True)    # a little bit different
 df_can.head()
+
+df_top5 = df_can.head(5)                            #Select to 5 rows
+
+
+#~GROUP
+df_continents = df_canada.groupby('Continent', axis = 0).sum()
 
 
 #~TRANSPOSE
