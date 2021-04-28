@@ -250,6 +250,7 @@ plt.xlabel('Number of Immigrants')
 plt.show()
 
 
+
 # SUBPLOTS
 
 fig = plt.figure() # create figure
@@ -313,7 +314,7 @@ plt.show()
 'No. Immigrants = {0:.0f} * Year + {1:.0f}'.format(fit[0], fit[1]) 
 
 
-# Another solution ?
+# Another solution 
 
 y= df['price']
 x= df['engine-size']
@@ -322,6 +323,13 @@ plt.scatter(x,y)
 plt.title('Scatterplot of Engine Size vs Price')
 plt.xlabel('Engine Size')
 plt.ylabel('Price')
+
+
+# Another solution 
+
+sns.regplot(x='engine-size', y='price', data=df)        # Engine size as potential predictor variable of price
+plt.ylim(0,)
+
 
 
 
@@ -383,63 +391,10 @@ ax0.legend(['Brazil', 'Argentina'], loc='upper left', fontsize='x-large')
 
 
 
-# GROUP BY
-
-df['drive-wheels'].unique() # group the variable "drive-wheels" by categories
-
-df_gptest = df[['drive-wheels','body-style','price']]
-grouped_test1 = df_gptest.groupby(['drive-wheels','body-style'],as_index=False).mean()
-print(grouped_test1)
-
-
-# Let's see if different types 'drive-wheels' impact 'price', we group the data.
-
-grouped_test2=df_gptest[['drive-wheels', 'price']].groupby(['drive-wheels'])
-grouped_test2.head(2)
-
-
-# We can obtain the values of the method group using the method "get_group".
-
-grouped_test2.get_group('4wd')['price']
-
-
-# Pivot table
-
-grouped_pivot = grouped_test1.pivot(index='drive-wheels',columns='body-style')
-grouped_pivot
-
-grouped_pivot = grouped_pivot.fillna(0) #fill missing values with 0
-grouped_pivot
-
-
-# Heatmap
+# HEATMAP
 
 plt.pcolor(grouped_pivot, cmap='RdBu')
 plt.colorbar()
-plt.show()
-
-
-# The default labels convey no useful information to us. Let's change that:
-
-fig, ax = plt.subplots()
-im = ax.pcolor(grouped_pivot, cmap='RdBu')
-
-#label names
-row_labels = grouped_pivot.columns.levels[1]
-col_labels = grouped_pivot.index
-
-#move ticks and labels to the center
-ax.set_xticks(np.arange(grouped_pivot.shape[1]) + 0.5, minor=False)
-ax.set_yticks(np.arange(grouped_pivot.shape[0]) + 0.5, minor=False)
-
-#insert labels
-ax.set_xticklabels(row_labels, minor=False)
-ax.set_yticklabels(col_labels, minor=False)
-
-#rotate label if too long
-plt.xticks(rotation=90)
-
-fig.colorbar(im)
 plt.show()
 
 
@@ -449,12 +404,6 @@ plt.show()
 df.corr()           # calculate the correlation between variables of type "int64" or "float64"
 
 df[["engine-size", "price"]].corr()     # Correlation between 'engine-size' and 'price'
-
-
-# Scatterplot
-
-sns.regplot(x='engine-size', y='price', data=df)        # Engine size as potential predictor variable of price
-plt.ylim(0,)
 
 
 # Pearson correlation
@@ -470,7 +419,12 @@ print("The Pearson Correlation Coefficient is", pearson_coef, " with a P-value o
 
 f_val, p_val = stats.f_oneway(grouped_test2.get_group('fwd')['price'], grouped_test2.get_group('rwd')['price'], grouped_test2.get_group('4wd')['price'])  
  
-print( "ANOVA results: F=", f_val, ", P =", p_val)  
+print( "ANOVA results: F=", f_val, ", P =", p_val)
+
+
+
+# REGRESSION PLOTS WITH SEABORN
+
 
 
 

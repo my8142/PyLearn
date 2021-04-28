@@ -227,6 +227,30 @@ df_top5 = df_can.head(5)                            #Select to 5 rows
 df_continents = df_canada.groupby('Continent', axis = 0).sum()
 
 
+#~GROUP BY
+df['drive-wheels'].unique() # group the variable "drive-wheels" by categories
+
+df_gptest = df[['drive-wheels','body-style','price']]
+grouped_test1 = df_gptest.groupby(['drive-wheels','body-style'],as_index=False).mean()
+print(grouped_test1)
+
+# Let's see if different types 'drive-wheels' impact 'price', we group the data.
+grouped_test2=df_gptest[['drive-wheels', 'price']].groupby(['drive-wheels'])
+grouped_test2.head(2)
+
+# We can obtain the values of the method group using the method "get_group".
+grouped_test2.get_group('4wd')['price']
+
+
+#~Pivot table
+
+grouped_pivot = grouped_test1.pivot(index='drive-wheels',columns='body-style')
+grouped_pivot
+
+grouped_pivot = grouped_pivot.fillna(0) #fill missing values with 0
+grouped_pivot
+
+
 #~TRANSPOSE
 years = list(map(str, range(1980, 2014)))
 df_top5 = df_can.head()
